@@ -10,4 +10,15 @@ class Marca extends Model
     use HasFactory;
 
     protected $fillable = ['nome', 'imagem'];
+
+    public function rules(){
+        return [
+            'nome'=>'required|min:3',
+            'imagem'=>'required'
+        ];
+    }
+
+    public function feedback(){
+        return ['required'=>':attribute requisitado'];
+    }
 }

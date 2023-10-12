@@ -21,6 +21,9 @@ class MarcaController extends Controller
     {
         // $marca = Marca::all();
         $marcas = $this->marca->all();
+        if($marcas === null){
+            return response()->json(['error'=>'sem marcas'], 404);
+        }
 
         return $marcas;
     }
@@ -43,9 +46,12 @@ class MarcaController extends Controller
      */
     public function store(Request $request)
     {
-        // $marca = Marca::create($request->all());
+
+        $request->validate($this->marca->rules(),$this->marca->feedback());
+
         $marca = $this->marca->create($request->all());
-        return $marca;
+
+        return response()->json($marca,201);
     }
 
     /**
@@ -56,7 +62,13 @@ class MarcaController extends Controller
      */
     public function show($id)
     {
-        return $this->marca->find($id);
+        $marca = $this->marca->find($id);
+
+        if($marca === null){
+            return response()->json(['error'=>'marca nâo encontrada'], 404);
+        }
+
+        return $marca;
     }
 
     /**
@@ -80,7 +92,13 @@ class MarcaController extends Controller
     public function update(Request $request, $id)
     {
         $marca = $this->marca->find($id);
+
+        if($marca === null){
+            return response()->json(['error'=>'marca nâo encontrada'], 404);
+        }
+        
         $marca->update($request->all());
+
         return  $marca;
     }
 
@@ -93,7 +111,13 @@ class MarcaController extends Controller
     public function destroy($id)
     {
         $marca = $this->marca->find($id);
+
+        if($marca === null){
+            return response()->json(['error'=>'marca nâo encontrada'], 404);
+        }
+
         $marca->delete($id);
+
         return ['msg'=>'deletado'];
     }
 }
