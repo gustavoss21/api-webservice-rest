@@ -92,13 +92,28 @@ class MarcaController extends Controller
     public function update(Request $request, $id)
     {
         $marca = $this->marca->find($id);
+        $rules = [];
 
         if($marca === null){
             return response()->json(['error'=>'marca nâo encontrada'], 404);
         }
-        
-        $marca->update($request->all());
 
+        if ($request->method() === 'PATCH'){
+            foreach($this->marca->rules() as $input => $rule){
+                if($input === array_keys($request->all())[0]){
+                    $rules[$input] = $rule;
+                }
+            }
+
+           $request->validate($rules, $this->marca->feedback());
+
+        }else{
+            
+            $request->validate($this->marca->rules(), $this->marca->feedback());
+
+        }
+
+        $marca->update($request->all());
         return  $marca;
     }
 
