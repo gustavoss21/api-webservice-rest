@@ -120,7 +120,15 @@ class MarcaController extends Controller
 
         }
 
-        $marca->update($request->all());
+        $imagem = $request->file('imagem');
+        $url_image = $imagem->store('imagens','public');
+
+        $marca->update([
+            'nome'=>$request->nome,
+            'imagem'=>$url_image,
+        ]);
+
+        // $marca->update($request->all());
         return  $marca;
     }
 
