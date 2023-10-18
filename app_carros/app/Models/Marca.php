@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Marca extends Model
 {
@@ -24,4 +25,9 @@ class Marca extends Model
             'imagem.mimes'=>'a imagem precisa ser do tipo png ou jpeg'
         ];
     }
+
+    public function modelos(){
+        return $this->HasMany('App\Modelos\Marca');
+    }
+
 }

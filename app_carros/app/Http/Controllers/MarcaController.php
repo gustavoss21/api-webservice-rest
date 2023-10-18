@@ -70,7 +70,7 @@ class MarcaController extends Controller
      */
     public function show($id)
     {
-        $marca = $this->marca->find($id);
+        $marca = $this->marca->with('modelos')->find($id);
 
         if($marca === null){
             return response()->json(['error'=>'marca nâo encontrada'], 404);
@@ -151,11 +151,9 @@ class MarcaController extends Controller
             return response()->json(['error'=>'marca nâo encontrada'], 404);
         }
 
-        Storage::disk('public')->delete($marca->imagem);
-        
+        if($marca->imagem){
+            Storage::disk('public')->delete($marca->imagem);
 
-        if(!$marca->imagem){
-            return ['msg'=>'não deletado'];
         }
 
         $marca->delete($id);
