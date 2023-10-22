@@ -21,14 +21,22 @@ class ModeloController extends Controller
 
     public function index(Request $request)
     {
+        $modelos = "";
+
+        if($request->has('marca_attr')){
+            $modelos = $this->modelo->with('marca:id,'.$request->marca_attr);
+        }else{
+
+            $modelos = $this->modelo->with('marca');
+        }
+        
         if($request->has('atributos')){
 
             $atributos = $request->atributos;
-            // $marcas = $this->marca->fill($request->all());
-            $modelos = $this->modelo->selectRaw($atributos)->with('marca')->get();
+            $modelos = $modelos->selectRaw($atributos)->get();
 
         }else{
-            $modelos = $this->modelo->all();
+            $modelos = $modelos->get();
         }
         return response()->json($modelos ,201);
         
