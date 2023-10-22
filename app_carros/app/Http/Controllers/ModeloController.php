@@ -101,11 +101,15 @@ class ModeloController extends Controller
     {
         $modelo = $this->modelo->find($id);
         $rules = [];
+        $campos = ['nome', 'imagem', 'marca_id', 'numero_portas', 'lugares', 'air_bag', 'abs'];
+        $modelo_campos = [];
+        $imagem = '';
 
         if($modelo === null){
             return response()->json(['error'=>'modelo nâo encontrada'], 404);
         }
 
+        // validação para cada metodo e definição de seus campos
         if ($request->method() === 'PATCH'){
             foreach($this->modelo->rules() as $input => $rule){
                 if($input === array_keys($request->all())[0]){
@@ -114,31 +118,34 @@ class ModeloController extends Controller
             }
 
            $request->validate($rules);
+ 
+            foreach($campos as $campo){
+                if($request[$campo]){
+                    $modelo_campos[$campo] = $request[$campo];
+
+                }
+            }
 
         }else{
 
             $request->validate($this->modelo->rules());
-
+            $modelo_campos = $request->all();
         }
 
-        if($request->image && $modelo->imagem){
-            Storage::disk('public')->delete($modelo->imagem);
+        // definição do campo imagem
+        if($request->imagem){
+            if($modelo->imagem){
+                Storage::disk('public')->delete($modelo->imagem);
+            }
+            
+            $imagem = $request->file('imagem');
+            
+            $modelo_campos['imagem'] = $imagem->store('imagens','public');
         }
 
-        $imagem = $request->file('imagem');
-        $url_image = $imagem->store('imagens','public');
+        $modelo->update($modelo_campos);
+            // dd($modelo_campos);
 
-        $modelo->update([
-            'nome'=>$request->nome,
-            'imagem'=>$url_image,
-            'marca_id' => $request->marca_id,
-            'numero_portas' => $request->numero_portas,
-            'lugares' => $request->lugares,
-            'air_bag'=> $request->air_bag,
-            'abs'=> $request->abs,
-        ]);
-
-        // $marca->update($request->all());
         return  $modelo;
     }
 
