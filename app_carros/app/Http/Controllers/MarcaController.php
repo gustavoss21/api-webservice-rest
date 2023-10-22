@@ -18,13 +18,23 @@ class MarcaController extends Controller
         $this->marca = $marca;
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        // $marca = Marca::all();
-        $marcas = $this->marca->all();
+        
+        if($request->has('atributos')){
+            $atributos = $request->atributos;
+            // $marcas = $this->marca->fill($request->all());
+            $marcas = $this->marca->selectRaw($atributos)->get();
+            // dd($atributos);
+        }else{
+            $marcas = $this->marca->all();
+        }
+
         if($marcas === null){
             return response()->json(['error'=>'sem marcas'], 404);
         }
+
+        // dd($request->atributos);
 
         return $marcas;
     }
