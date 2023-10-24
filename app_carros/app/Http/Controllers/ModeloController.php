@@ -29,6 +29,16 @@ class ModeloController extends Controller
 
             $modelos = $this->modelo->with('marca');
         }
+
+        if($request->has('filtro')){
+            $filtros = explode('$', $request->filtro);
+
+            foreach($filtros as $filtro){
+                $col_op_cam = explode(';',$filtro);
+                $modelos = $modelos->where($col_op_cam[0], $col_op_cam[1],$col_op_cam[2]);
+            }
+            
+        }
         
         if($request->has('atributos')){
 
