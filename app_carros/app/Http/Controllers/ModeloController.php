@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Modelo;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use App\repositories\MarcaRepository;
 
 
 class ModeloController extends Controller
@@ -22,6 +23,7 @@ class ModeloController extends Controller
     public function index(Request $request)
     {
         $modelos = "";
+        $marcaRepository = New MarcaRepository($this->modelo);
 
         if($request->has('marca_attr')){
             $modelos = $this->modelo->with('marca:id,'.$request->marca_attr);
@@ -31,12 +33,7 @@ class ModeloController extends Controller
         }
 
         if($request->has('filtro')){
-            $filtros = explode('$', $request->filtro);
-
-            foreach($filtros as $filtro){
-                $col_op_cam = explode(';',$filtro);
-                $modelos = $modelos->where($col_op_cam[0], $col_op_cam[1],$col_op_cam[2]);
-            }
+            $this->modelo = $marcaRepository->filtrar($request->filtro);
             
         }
         

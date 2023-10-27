@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Marca;
+use App\repositories\MarcaRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -19,13 +20,15 @@ class MarcaController extends Controller
     }
 
     public function index(Request $request)
-    {
+    {   
+        $marcaRepository = new MarcaRepository($this->marca);
+
+        if($request->has('filtro')){
+            $this->marca = $marcaRepository->filtrar($request->filtro);   
+        }
         
         if($request->has('atributos')){
-            $atributos = $request->atributos;
-            // $marcas = $this->marca->fill($request->all());
-            $marcas = $this->marca->selectRaw($atributos)->get();
-            // dd($atributos);
+            $marcas = $this->marca->selectRaw($request->atributos)->get();
         }else{
             $marcas = $this->marca->all();
         }
@@ -33,8 +36,6 @@ class MarcaController extends Controller
         if($marcas === null){
             return response()->json(['error'=>'sem marcas'], 404);
         }
-
-        // dd($request->atributos);
 
         return $marcas;
     }
