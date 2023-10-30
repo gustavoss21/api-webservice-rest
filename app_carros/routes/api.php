@@ -29,3 +29,11 @@ Route::apiResource('cliente',ClienteController::class);
 Route::apiResource('locacao',LocacaoController::class);
 Route::apiResource('marca',MarcaController::class);
 Route::apiResource('modelo',ModeloController::class);
+
+
+
+Route::post('login', 'App\Http\Controllers\AuthController@login');
+Route::post('logout', 'AuthController@logout');
+Route::post('refresh', 'AuthController@refresh');
+Route::post('me', 'AuthController@me');
+
