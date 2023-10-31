@@ -24,11 +24,15 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::apiResource('carro',CarroController::class);
-Route::apiResource('cliente',ClienteController::class);
-Route::apiResource('locacao',LocacaoController::class);
-Route::apiResource('marca',MarcaController::class);
-Route::apiResource('modelo',ModeloController::class);
+Route::middleware('jwt.auth')->prefix('v1')->group(function () {
+    Route::apiResource('carro',CarroController::class);
+    Route::apiResource('cliente',ClienteController::class);
+    Route::apiResource('locacao',LocacaoController::class);
+    Route::apiResource('marca',MarcaController::class);
+    Route::apiResource('modelo',ModeloController::class);
+
+}
+);
 
 
 
