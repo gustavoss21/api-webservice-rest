@@ -38,4 +38,9 @@ class AuthController extends Controller
         $token = auth('api')->refresh();
         return response()->json($token);
     }
+
+    public function logout(){
+        auth('api')->logout();
+        return response()->json(['token status'=> 'expirado ou removido!']);
+    }
 }
