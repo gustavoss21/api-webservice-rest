@@ -1,17 +1,19 @@
 <template>
     
 <div class="container">
+
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card">
                 <div class="card-header">Login</div>
                 <div class="card-body">
-                    <form method="POST" action="#">
+                    <form method="post" @submit.prevent="login($event)">
+                        <input type="hidden" name="_token" :value="token">
                         <div class="row mb-3">
-                            <label for="email" class="col-md-4 col-form-label text-md-end">Email</label>
+                            <label for="email" class="col-md-4 col-form-label text-md-end">Emails</label>
 
                             <div class="col-md-6">
-                                <input id="email" type="email" class="form-control" name="email" value="" required autocomplete="email" autofocus>
+                                <input id="email" type="email" class="form-control" name="email" value="" required autocomplete="email" autofocus v-model="email">
                             </div>
                         </div>
 
@@ -19,7 +21,7 @@
                             <label for="password" class="col-md-4 col-form-label text-md-end">Senha</label>
 
                             <div class="col-md-6">
-                                <input id="password" type="password" class="form-control" name="password" required autocomplete="current-password">
+                                <input id="password" type="password" class="form-control" name="password" required autocomplete="current-password" v-model="senha">
                             </div>
                         </div>
 
@@ -41,7 +43,7 @@
                                     Login
                                 </button>
 
-                                    <a class="btn btn-link" href="#">
+                                    <a class="btn btn-link" href="">
                                         Esqueceu a senha?
                                     </a>
                             </div>
@@ -55,5 +57,40 @@
 </template>
 
 <script>
+    export default{
+        props:['token','link', 'link-reset'],
+        data(){
+            return{
+                email:'',
+                senha:''
+            }
+        },
 
+        methods:{
+            login(e){
+                let url = 'http://127.0.0.1:8000/api/login';
+                let settings = {
+                    method:'POST',
+                    body: new URLSearchParams({
+                        email:this.email,
+                        password:this.senha,
+                    })
+                }
+
+                fetch(url, settings)
+                    .then(data => data.json())
+                    .then(
+                        data => {
+                            if(data.token){
+                                document.cookie = 'token=' + data.token + ';SameSite=Lax'
+                            }
+                            
+                            e.target.submit()
+                        }
+                        )
+
+                console.log('teste')
+            }
+        }
+    }
 </script>

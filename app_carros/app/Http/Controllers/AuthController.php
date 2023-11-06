@@ -21,7 +21,6 @@ class AuthController extends Controller
         $credentials = request(['email', 'password']);
 
         $token = auth('api')->attempt($credentials);
-        
         if (!$token) {
             return response()->json(['erro'=>'Usuário ou senha inválido!'], 403);
         }
