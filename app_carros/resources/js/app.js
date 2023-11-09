@@ -23,6 +23,7 @@ Vue.component('example-component', require('./components/ExampleComponent.vue').
 Vue.component('login-component', require('./components/login.vue').default);
 Vue.component('home-component', require('./components/home.vue').default);
 Vue.component('marcas-component', require('./components/marcas.vue').default);
+Vue.component('input-componet', require('./components/input.vue').default);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to

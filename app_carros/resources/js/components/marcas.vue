@@ -8,14 +8,14 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="form-group col">
-                            <label for="id">Email address</label>
-                            <input type="number" class="form-control" id="id" aria-describedby="idHelp" placeholder="ID">
-                            <small id="idHelp" class="form-text text-muted">id de marca</small>
+                            <input-componet id-for="id" id-help="idHelp" text="id" text-help="digite o id da marca">
+                                <input type="number" class="form-control" id="id" aria-describedby="idHelp" placeholder="ID">
+                            </input-componet>
                         </div>
                         <div class="form-group col">
-                            <label for="nome">Email address</label>
-                            <input type="text" class="form-control" id="text" aria-describedby="nomeHelp" placeholder="Nome">
-                            <small id="nomeHelp" class="form-text text-muted">nome de marca</small>
+                            <input-componet id-for="nome" id-help="nomeHelp" text="nome" text-help="nome de marca">
+                                <input type="text" class="form-control" id="text" aria-describedby="nomeHelp" placeholder="Nome">                                
+                            </input-componet>
                         </div>
                     </div>
                 </div>
