@@ -5422,7 +5422,54 @@ var staticRenderFns = [function () {
     staticClass: "card-header"
   }, [_vm._v("Marcas")]), _vm._v(" "), _c("div", {
     staticClass: "card-body"
-  }, [_vm._v("\n                   Você esta vendo as marcas\n                ")])])])])]);
+  }, [_c("div", {
+    staticClass: "row"
+  }, [_c("div", {
+    staticClass: "form-group col"
+  }, [_c("label", {
+    attrs: {
+      "for": "id"
+    }
+  }, [_vm._v("Email address")]), _vm._v(" "), _c("input", {
+    staticClass: "form-control",
+    attrs: {
+      type: "number",
+      id: "id",
+      "aria-describedby": "idHelp",
+      placeholder: "ID"
+    }
+  }), _vm._v(" "), _c("small", {
+    staticClass: "form-text text-muted",
+    attrs: {
+      id: "idHelp"
+    }
+  }, [_vm._v("id de marca")])]), _vm._v(" "), _c("div", {
+    staticClass: "form-group col"
+  }, [_c("label", {
+    attrs: {
+      "for": "nome"
+    }
+  }, [_vm._v("Email address")]), _vm._v(" "), _c("input", {
+    staticClass: "form-control",
+    attrs: {
+      type: "text",
+      id: "text",
+      "aria-describedby": "nomeHelp",
+      placeholder: "Nome"
+    }
+  }), _vm._v(" "), _c("small", {
+    staticClass: "form-text text-muted",
+    attrs: {
+      id: "nomeHelp"
+    }
+  }, [_vm._v("nome de marca")])])])]), _vm._v(" "), _c("div", {
+    staticClass: "card-footer"
+  }, [_c("button", {
+    staticClass: "float-right btn btn-primary",
+    attrs: {
+      type: "submit"
+    }
+  }, [_vm._v("buscar")])])])])])]);
 }];
 render._withStripped = true;
 
