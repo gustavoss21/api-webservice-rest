@@ -1,10 +1,10 @@
 <template>
     <div>
-        <label :for="idFor">{{text}}</label>
+        <label :for="idFor">{{text}}</label><br>
         <slot></slot>
         <small :id="idHelp" class="form-text text-muted">{{textHelp}}</small>
+        <br>
     </div>
-   
 </template>
 
 <script>

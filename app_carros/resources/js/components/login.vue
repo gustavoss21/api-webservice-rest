@@ -43,7 +43,7 @@
                                     Login
                                 </button>
 
-                                    <a class="btn btn-link" href="">
+                                    <a class="btn btn-link" :href="linkReset">
                                         Esqueceu a senha?
                                     </a>
                             </div>
@@ -58,7 +58,7 @@
 
 <script>
     export default{
-        props:['token','link', 'link-reset'],
+        props:['token', 'linkReset'],
         data(){
             return{
                 email:'',
@@ -69,15 +69,21 @@
         methods:{
             login(e){
                 let url = 'http://127.0.0.1:8000/api/login';
+                // let data = new URLSearchParams(url)
+                // let data = new URLSearchParams({'email':this.email,'password':this.senha})
                 let settings = {
-                    method:'POST',
+                    method: "post",
                     body: new URLSearchParams({
-                        email:this.email,
-                        password:this.senha,
-                    })
+                    'email':this.email,
+                    'password':this.senha
+                })
                 }
+                console.log({
+                    'email':this.email,
+                    'password':this.senha
+                })
 
-                fetch(url, settings)
+                fetch(url,settings)
                     .then(data => data.json())
                     .then(
                         data => {

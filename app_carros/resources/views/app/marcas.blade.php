@@ -1,5 +1,5 @@
 @extends('layouts.app')
 
 @section('content')
- <marcas-component></marcas-component>
+ <marcas-component token="{{ csrf_token() }}"></marcas-component>
 @endsection

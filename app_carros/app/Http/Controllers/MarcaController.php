@@ -58,7 +58,7 @@ class MarcaController extends Controller
      */
     public function store(Request $request)
     {
-
+        // return response()->json(['teste'=>123],201);
         $request->validate($this->marca->rules(),$this->marca->feedback());
 
         $imagem = $request->file('imagem');
