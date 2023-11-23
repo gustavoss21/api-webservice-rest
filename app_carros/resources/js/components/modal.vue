@@ -35,6 +35,7 @@
 </template>
 
 <script>
+import { strict } from 'assert'
 import modal from './modal.vue'
 
     export default {
@@ -44,6 +45,20 @@ import modal from './modal.vue'
             nome :'',
             imagem: []
         }},
+
+        computed:{
+            getToken(){
+                let cookie = document.cookie.split(';')
+                
+                let token = cookie.find(
+                        index => index.indexOf('token=') ==! '-1'
+                    ).split('=')[1]
+
+                return 'Bearer ' + token
+
+            }
+        },
+
         methods:{
             changeFile($e){
                 this.imagem = $e.target.files
@@ -56,11 +71,13 @@ import modal from './modal.vue'
                 data.append('imagem',this.imagem[0])
 
                 let config = {
-                    header : {
+                    headers : {
                         'Content-Type' : 'multipart/form-data',
                         'accept': 'application/json',
+                        'Authorization' : this.getToken
                     }
                 }
+                console.log(config)
                 axios.post(url, data, config)
                     .then(
                         response => {
@@ -70,7 +87,7 @@ import modal from './modal.vue'
                     .catch(
                         error => console.log(error)
                     )
-            }
+            },
         }
     }
 </script>
