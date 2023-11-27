@@ -10,24 +10,9 @@
                         <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    {{ nome }}
-        {{ imagem }}
-                    <div class="modal-body">
-                        <form action="#" method="post" @submit.prevent="$event=>{console.log($event)}">
-                            <input type="hidden" name="_token" :value="csrf">
-
-                            <input-component text="Nome da marca" id-help="nameMarcaHelp" id-for="name" text-help="digite o nome da marca">
-                            <input type="text" id="name" name="nome" v-model="nome">
-                            </input-component>
-                            <input-component text="Imagem da marca" id-help="imagemMarcaHelp" id-for="imagem-marca" text-help="Selecione uma imagem para a marca">
-                                <input type="file" id="imagem-marca" name="imagem" @change="changeFile($event)">
-                            </input-component>
-                            </form>
-                        
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-primary" @click="addMarca()">Adicionar</button>
-                    </div>
+                    <slot name="modal-message"></slot>
+                    <slot name="modal-body"></slot>
+                    <slot name="modal-footer"></slot>
                 </div>
             </div>
         </div>
@@ -39,55 +24,6 @@ import { strict } from 'assert'
 import modal from './modal.vue'
 
     export default {
-       props:['idModal','title','csrf'],
-       data(){
-        return{
-            nome :'',
-            imagem: []
-        }},
-
-        computed:{
-            getToken(){
-                let cookie = document.cookie.split(';')
-                
-                let token = cookie.find(
-                        index => index.indexOf('token=') ==! '-1'
-                    ).split('=')[1]
-
-                return 'Bearer ' + token
-
-            }
-        },
-
-        methods:{
-            changeFile($e){
-                this.imagem = $e.target.files
-            },
-
-            addMarca(){
-                let url = 'http://127.0.0.1:8000/api/v1/marca';
-                let data = new FormData()
-                data.append('nome', this.nome)
-                data.append('imagem',this.imagem[0])
-
-                let config = {
-                    headers : {
-                        'Content-Type' : 'multipart/form-data',
-                        'accept': 'application/json',
-                        'Authorization' : this.getToken
-                    }
-                }
-                console.log(config)
-                axios.post(url, data, config)
-                    .then(
-                        response => {
-                            console.log(response)
-                        }
-                    )
-                    .catch(
-                        error => console.log(error)
-                    )
-            },
-        }
+       props:['idModal','title']
     }
 </script>
