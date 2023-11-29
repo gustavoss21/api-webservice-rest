@@ -28,6 +28,7 @@ Vue.component('marcas-component', require('./components/marcas.vue').default);
 Vue.component('modal-component', require('./components/modal.vue').default);
 Vue.component('table-component', require('./components/table.vue').default);
 Vue.component('message-component', require('./components/message.vue').default);
+Vue.component('pagination-component', require('./components/pagination.vue').default);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to

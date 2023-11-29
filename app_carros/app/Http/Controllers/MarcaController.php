@@ -22,16 +22,16 @@ class MarcaController extends Controller
     public function index(Request $request)
     {   
         $marcaRepository = new MarcaRepository($this->marca);
-
         if($request->has('filtro')){
-            $this->marca = $marcaRepository->filtrar($request->filtro);   
+            // dd(get_class_methods($marcaRepository));
+            $this->marca = $marcaRepository->filtrar($request->filtro); 
         }
-        
+
         if($request->has('atributos')){
-            $marcas = $this->marca->selectRaw($request->atributos)->get();
-        }else{
-            $marcas = $this->marca->all();
+            $this->marca = $this->marca->selectRaw($request->atributos);
         }
+
+        $marcas = $this->marca->paginate(4);
 
         if($marcas === null){
             return response()->json(['error'=>'sem marcas'], 404);

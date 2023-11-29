@@ -3,6 +3,8 @@
         <div class="row justify-content-center">
 
             <div class="col-md-8">
+                {{ marca }}
+                {{ marca_id }}
                 <content-component titulo="Marcas">
                     <template v-slot:body>
                         <form action="#" method="get">
@@ -10,12 +12,12 @@
                             <div class="row">
                             <div class="form-group col">
                                 <input-component id-for="id" id-help="idHelp" text="id" text-help="digite o id da marca">
-                                    <input type="number" class="form-control" id="id" aria-describedby="idHelp" placeholder="ID">
+                                    <input type="number" class="form-control" id="id" aria-describedby="idHelp" placeholder="ID" v-model="marca_id">
                                 </input-component>
                             </div>
                             <div class="form-group col">
                                 <input-component id-for="nome" id-help="nomeHelp" text="nome" text-help="nome de marca">
-                                    <input type="text" class="form-control" id="text" aria-describedby="nomeHelp" placeholder="Nome">                                     
+                                    <input type="text" class="form-control" id="nome" aria-describedby="nomeHelp" placeholder="Nome" v-model="marca">                                     
                                 </input-component>
                             </div>
                         </div>
@@ -23,14 +25,19 @@
                         
                     </template>
                     <template v-slot:footer>
-                        <button class="float-right btn btn-primary" type="submit">buscar</button>
+                        <button class="float-right btn btn-primary" type="button" @click="getMarcasByFilter()">buscar</button>
                     </template>
                 </content-component>
                 <content-component titulo="Correspondências de marcas">
                     <template v-slot:body>
-                        <table-component :dataList=marcas :titles=atributos_marca></table-component>
+                        <table-component :dataList=marcas.data :titles=atributos_marca></table-component>
                     </template>
                     <template v-slot:footer>
+                        <pagination-component>
+                            <template>
+                                <li v-for="p,key in marcas.links" :key="key" :class="p.active?'page-item active':'page-item' "><a class="page-link" @click="pagination(p.url)" v-html="p.label"></a></li>
+                            </template>
+                        </pagination-component>
                         <button class="float-right btn btn-primary" data-toggle="modal" data-target="#adicionar" type="submit">Adicionar</button>
                     </template>
                 </content-component>
@@ -45,7 +52,7 @@
                             <input type="hidden" name="_token" :value="token">
 
                             <input-component text="Nome da marca" id-help="nameMarcaHelp" id-for="name" text-help="digite o nome da marca">
-                            <input type="text" id="name" name="nome" v-model="nome">
+                            <input type="text" id="name" name="nome" v-model="marca">
                             </input-component>
                             <input-component text="Imagem da marca" id-help="imagemMarcaHelp" id-for="imagem-marca" text-help="Selecione uma imagem para a marca">
                                 <input type="file" id="imagem-marca" name="imagem" @change="changeFile($event)">
@@ -64,18 +71,20 @@
 </template>
 <script>
 import modal from './modal.vue'
+import Pagination from './pagination.vue'
     export default {
-        components: { modal },        
+        components: { modal, Pagination },        
         props:['token'],
         data(){
         return{
-            nome :'',
+            marca :'',
+            marca_id:'',
             imagem: [],
             message: '',
             type: '',
-            marcas:'',
+            marcas: {data:[]},
             urlBasy: 'http://127.0.0.1:8000/api/v1/marca',
-            atributos_marca: ['id','nome','imagem']
+            atributos_marca: ['id','nome','imagem'],
         }},
         computed:{
             getToken(){
@@ -96,7 +105,7 @@ import modal from './modal.vue'
 
             addMarca(){
                 let data = new FormData()
-                data.append('nome', this.nome)
+                data.append('nome', this.marca)
                 data.append('imagem',this.imagem[0])
 
                 let config = {
@@ -122,16 +131,32 @@ import modal from './modal.vue'
             },
 
             getMarcas(){
-                let url = this.urlBasy + '?atributos='+String(this.atributos_marca)
-
+                let url = this.urlBasy //+ '?atributos='+String(this.atributos_marca)
+                console.log(url)
                 axios.get(url)
                     .then(response=>{
                         this.marcas = response.data
                         console.log(this.marcas)
-                        // console.log()
+
                     })
                     .catch(error => {console.log(error)})
                 
+
+            },
+
+            getMarcasByFilter(){
+                let filtro = ''
+                if(this.marca){
+                    filtro+='nome:like:'+this.marca+'%'
+                }
+                if(this.marca_id){
+                    filtro == '' ? (filtro +='id:' + this.marca_id) : (filtro +=';id:'+ this.marca_id)
+                }
+
+                let url = this.urlBasy
+                this.urlBasy += '?filtro='+filtro
+                this.getMarcas()   
+                this.urlBasy = url  
 
             },
 
@@ -146,6 +171,13 @@ import modal from './modal.vue'
                         div_message.setAttribute('hidden',true)
 
                 },5000)
+            },
+
+            pagination(url){
+                if(!url) return
+                
+                this.urlBasy = url
+                this.getMarcas()
             }
         
         },
