@@ -2,7 +2,8 @@
    <table class="table mt-5 table-hover">
         <thead>
             <tr>
-            <th scope="col" v-for="t, key in titles" :key="key">{{ t.toLocaleUpperCase() }}</th>
+                <th scope="col" v-for="t, key in titles" :key="key">{{ t.toLocaleUpperCase() }}</th>
+                <th>...</th>
             </tr>
         </thead>
         <tbody>
@@ -14,6 +15,11 @@
                     </template>
                     <template v-else>{{object[t]}}</template>
                 </td>
+                <td>
+                    <button class="btn btn-outline-primary" data-toggle="modal" data-target="#atualizar_marca" @click="func(object.imagem,object.nome,object.id)">Atualizar</button>
+                    <button @click="func(object.imagem,object.nome,object.id)" data-toggle="modal" data-target="#show_marca" class="btn btn-outline-primary">Visualizar</button>
+                    <button class="btn btn-outline-danger">Remover</button>
+                </td>
             </tr>
         </tbody>
     </table>
@@ -23,6 +29,6 @@
 import { kem } from 'node-forge';
 
     export default {
-        props:['dataList','titles'],
+        props:['dataList','titles','func'],
     }
 </script>
