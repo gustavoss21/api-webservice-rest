@@ -7,6 +7,13 @@
 require('./bootstrap');
 
 window.Vue = require('vue').default;
+import Vuex from 'vuex'
+
+Vue.use(Vuex)
+console.log(Vue)
+const store = new Vuex.Store({
+    state: 'teste de recuperação'
+})
 
 /**
  * The following block of code may be used to automatically register your
@@ -38,4 +45,5 @@ Vue.component('pagination-component', require('./components/pagination.vue').def
 
 const app = new Vue({
     el: '#app',
+    store
 });
