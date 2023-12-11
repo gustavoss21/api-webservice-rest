@@ -5,6 +5,7 @@
             <div class="col-md-8">
                 {{ marca }}
                 {{ marca_id }}
+                <!-- form shearch -->
                 <content-component titulo="Marcas">
                     <template v-slot:body>
                         <form action="#" method="get">
@@ -28,9 +29,11 @@
                         <button class="float-right btn btn-primary" type="button" @click="getMarcasByFilter()">buscar</button>
                     </template>
                 </content-component>
+
+                <!-- tabela de marcas -->
                 <content-component titulo="Correspondências de marcas">
                     <template v-slot:body>
-                        <table-component :dataList=marcas.data :titles=atributos_marca :func=setMarca>
+                        <table-component :dataList=marcas.data :titles=atributos_marca>
                             <modal-component id-modal="atualizar" title="Atualizar Marca">
                                 <template v-slot:modal-message>
                                     <message-component :type="type" :message="message"></message-component>
@@ -70,7 +73,7 @@
             <!-- modal adicionar -->
             <modal-component id-modal="adicionar" title="Adicionar Marcas">
                 <template v-slot:modal-message>
-                    <message-component :type="type" :message="message"></message-component>
+                    <message-component :type="type" :message="message" :id_message="id_message.add"></message-component>
                 </template>
                 <template v-slot:modal-body>
                     <div class="modal-body">
@@ -100,11 +103,11 @@
                 <template v-slot:modal-body>
                     <div class="modal-body row">
                         <div class="col">
-                            <img :src=marca_img v-if="marca_img">
+                            <img :src="'/storage/' + $store.state.imagem" v-if="$store.state.imagem">
                         </div>
                         <div class="col">
-                            <span class="h2">nome: {{ marca_nome }}</span><br>
-                            <span class="h2">id: {{ marca_id }}</span>
+                            <span class="h2">nome: {{ $store.state.nome }}</span><br>
+                            <span class="h2">id: {{ $store.state.id }}</span>
                         </div>
                        
                     </div>
@@ -113,19 +116,18 @@
             <!-- modal Atualizar -->
             <modal-component id-modal="atualizar_marca" title="Atualisar Marca">
                 <template v-slot:modal-message>
-                    <message-component :type="type" :message="message"></message-component>
+                    <message-component :type="type" :message="message" :id_message="id_message.update"></message-component>
                 </template>
                 <template v-slot:modal-body>
                     <div class="modal-body">
                         <form action="#" method="post" @submit.prevent="$event=>{console.log($event)}">
-                            @patch()
                             <input type="hidden" name="_token" :value="token">
-                            <input type="hidden" name="id" :value="marca_id">
+                            <input type="hidden" name="id" :value="$store.state.id">
                             <input-component text="Nome da marca" id-help="nameMarcaHelp" id-for="name" text-help="digite o nome da marca">
-                            <input type="text" id="name" name="nome" v-model="marca_nome">
+                            <input type="text" id="name" name="nome" v-model="$store.state.nome" @change="changeNome()">
                             </input-component>
                             <input-component text="Imagem da marca" id-help="imagemMarcaHelp" id-for="imagem-marca" text-help="Selecione uma imagem para a marca">
-                                <img :src=marca_img width="60" v-if="marca_img && !imagem.length">
+                                <img :src="'/storage/'+$store.state.imagem" width="60" v-if="$store.state.imagem">
                                 <input type="file" id="imagem-marca" name="imagem" @change="changeFile($event)">
                             </input-component>
                         </form>
@@ -133,7 +135,31 @@
                 </template>
                 <template v-slot:modal-footer>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-primary" @click="addMarca()">Atualizar</button>
+                        <button type="button" class="btn btn-primary" @click="updateMarca()">Atualizar</button>
+                    </div>
+                </template>
+            </modal-component>
+            <!-- modal remover -->
+            <modal-component id-modal="remover_marca" title="Remover Marca">
+                <template v-slot:modal-message>
+                    <message-component :type="type" :message="message" :id_message="id_message.remove"></message-component>
+                </template>
+                <template v-slot:modal-body>
+                    <div class="modal-body">
+                        <form action="#" method="post" @submit.prevent="$event=>{console.log($event)}">
+                            <input type="hidden" name="_token" :value="token">
+                            <input-component text="ID da marca" id-help="nameMarcaHelp" id-for="id" text-help="digite o nome da marca">
+                            <input type="text" id="id" name="id" v-model="$store.state.id" disabled>
+                            </input-component>
+                            <input-component text="Nome da marca" id-help="nameMarcaHelp" id-for="name" text-help="digite o nome da marca">
+                            <input type="text" id="name" name="nome" v-model="$store.state.nome" disabled>
+                            </input-component>
+                        </form>
+                    </div>
+                </template>
+                <template v-slot:modal-footer>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" @click="removeMarca()">Remover</button>
                     </div>
                 </template>
             </modal-component>
@@ -151,6 +177,7 @@ import Pagination from './pagination.vue'
         data(){
         return{
             marca :'',
+            change_nome: false,
             marca_id:'',
             marca_img: '',
             imagem: [],
@@ -158,10 +185,15 @@ import Pagination from './pagination.vue'
             message: '',
             type: '',
             marcas: {data:[]},
-            urlBasy: 'http://127.0.0.1:8000/api/v1/marca?',
+            urlBasy: 'http://127.0.0.1:8000/api/v1/marca',
             uriFilter: '',
             uriPagination: '',
             atributos_marca: ['id','nome','imagem'],
+            id_message: {
+                'remove':'remove_message',
+                'add': 'add_message',
+                'update':'update_message'
+            }
            
         }},
         computed:{
@@ -181,6 +213,10 @@ import Pagination from './pagination.vue'
                 this.imagem = $e.target.files
             },
 
+            changeNome(){
+                this.change_nome = true
+            },
+
             addMarca(){
                 let data = new FormData()
                 data.append('nome', this.marca)
@@ -198,11 +234,11 @@ import Pagination from './pagination.vue'
                     .then(
                         response => {
                             console.log(response)
-                            this.message_alert('success','enviado com sucesso')
+                            this.message_alert('success','enviado com sucesso',this.id_message.add)
                         }
                     )
                     .catch(error => {
-                            this.message_alert('danger','hover um erro inesperado')
+                            this.message_alert('danger','hover um erro inesperado',this.id_message.add)
                             console.log(error)
                         }
                     )
@@ -211,8 +247,8 @@ import Pagination from './pagination.vue'
             getMarcas(){
 
                 let uri = this.uriPagination && this.uriFilter ? 
-                        this.uriPagination +'&'+ this.uriFilter : 
-                        this.uriPagination + this.uriFilter
+                        '?'+this.uriPagination +'&'+ this.uriFilter : 
+                        '?'+this.uriPagination + this.uriFilter
 
                 let url = this.urlBasy+uri
                 axios.get(url)
@@ -223,6 +259,35 @@ import Pagination from './pagination.vue'
 
                 this.uriPagination = ''
                 
+
+            },
+
+            removeMarca(){
+
+                let url = this.urlBasy+'/'+this.$store.state.id
+                let formData = new FormData()
+                formData.append('_method', 'delete')
+
+                let config = {
+                    headers : {
+                        'Accept': 'application/json',
+                        'Authorization' : this.getToken
+                    }
+                }
+
+                axios.post(url,formData,config)
+                    .then(response=>{
+                        this.message_alert('success','A marca foi removida com sucesso',this.id_message.remove)
+                        this.getMarcas()
+                        
+                    })
+                    .catch(error => {
+                        this.message_alert('danger','Houve um erro inesperado, ERROR: '+error,this.id_message.remove)
+                            console.log(error)}
+                        )
+
+                this.uriPagination = ''
+
 
             },
 
@@ -242,12 +307,14 @@ import Pagination from './pagination.vue'
                 this.getMarcas()   
             },
 
-            message_alert(type,message){
-                let div_message = document.querySelector('#message');
+            message_alert(type,message,element){
+                let div_message = document.querySelector('#'+element);
+                if(!div_message) return
                 this.type = type;
                 this.message = message;
 
                 div_message.removeAttribute('hidden')
+
                 window.setTimeout(
                     function(){
                         div_message.setAttribute('hidden',true)
@@ -262,17 +329,47 @@ import Pagination from './pagination.vue'
                 this.getMarcas()
             },
 
-            setMarca(image,nome,id){
-                
-                this.marca_nome = ''
-                this.marca_img = ''
-                this.marca_id = ''
+            updateMarca(){
+                let url = this.urlBasy+'/'+this.$store.state.id
+                let data = new FormData()
 
-                this.marca_nome = nome
-                this.marca_img = "/storage/"+image
-                this.marca_id = id
-            },
-        
+                this.change_nome ? data.append('nome', this.$store.state.nome) : 
+
+                this.change_nome = false
+                data.append('imagem', this.imagem[0])
+                data.append('id', this.$store.state.id)
+                data.append('_method', 'PATCH')
+                let config = {
+                    headers : {
+                        'Content-Type' : 'multipart/form-data',
+                        'accept': 'application/json',
+                        'Authorization' : this.getToken
+                    }
+                }
+                console.log(this.marcas.data)
+
+                axios.post(url, data, config)
+                    .then(
+                        response => {
+                            this.message_alert('success','enviado com sucesso',this.id_message.add)
+                            this.marcas.data.forEach((object,index) => {
+                                if(object.id === response.data.id){
+                                    console.log(index)
+                                    console.log(response.data)
+                                    this.marcas.data[index] = response.data
+                                } 
+                            })
+                            console.log(this.marcas.data)
+
+                        }
+                    )
+                    .catch(error => {
+                            this.message_alert('danger','hover um erro inesperado',this.id_message.add)
+                            console.log(error)
+                        }
+                    )
+            }
+
         },
         mounted(){
             this.getMarcas()

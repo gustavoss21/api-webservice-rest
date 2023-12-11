@@ -118,34 +118,34 @@ class MarcaController extends Controller
         }
 
         if ($request->method() === 'PATCH'){
-            foreach($this->marca->rules() as $input => $rule){
+            foreach($marca->rules() as $input => $rule){
                 if($input === array_keys($request->all())[0]){
                     $rules[$input] = $rule;
                 }
             }
 
-           $request->validate($rules, $this->marca->feedback());
+           $request->validate($rules, $marca->feedback());
 
         }else{
 
-            $request->validate($this->marca->rules(), $this->marca->feedback());
+            $request->validate($marca->rules(), $marca->feedback());
 
         }
-
-        if($request->image && $marca->imagem){
-            Storage::disk('public')->delete($marca->imagem);
-        }
-
-        $imagem = $request->file('imagem');
-        $url_image = $imagem->store('imagens','public');
 
         $marca->fill($request->all());
 
-        $marca->imagem = $url_image;
+        // set image
+        if($request->imagem && $marca->imagem){
+            Storage::disk('public')->delete($marca->imagem);
+
+            $imagem = $request->file('imagem');
+            $url_image = $imagem->store('imagens','public');
+
+            $marca->imagem = $url_image;
+        }
 
         $marca->save();
 
-        // $marca->update($request->all());
         return  $marca;
     }
 
@@ -156,7 +156,8 @@ class MarcaController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)
-    {
+    {   
+
         $marca = $this->marca->find($id);
 
         if($marca === null){
@@ -168,7 +169,8 @@ class MarcaController extends Controller
 
         }
 
-        $marca->delete($id);
+        $marca->modelos->each->delete();
+        $marca->delete();
 
         return ['msg'=>'deletado'];
     }

@@ -27,7 +27,7 @@ class Marca extends Model
     }
 
     public function modelos(){
-        return $this->HasMany('App\Modelos\Marca');
+        return $this->HasMany('App\Models\Modelo');
     }
 
 }

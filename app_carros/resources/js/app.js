@@ -10,9 +10,9 @@ window.Vue = require('vue').default;
 import Vuex from 'vuex'
 
 Vue.use(Vuex)
-console.log(Vue)
+
 const store = new Vuex.Store({
-    state: 'teste de recuperação'
+    state: ''
 })
 
 /**
