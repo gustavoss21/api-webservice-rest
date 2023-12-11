@@ -11,7 +11,7 @@
                 
                 <td :scope="key==0?'row':''" v-for="t, key in titles" :key="key">
                     <template v-if="t=='imagem'">
-                        <img :src="'/storage/'+ object[t]" width="30">
+                        <img :src="object[t] | format_date" width="30">
                     </template>
                     <template v-else>{{object[t]}}</template>
                 </td>

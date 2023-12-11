@@ -43,6 +43,10 @@ Vue.component('pagination-component', require('./components/pagination.vue').def
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 
+Vue.filter('format_date',function(d){
+    return '/storage/' + d
+})
+
 const app = new Vue({
     el: '#app',
     store
