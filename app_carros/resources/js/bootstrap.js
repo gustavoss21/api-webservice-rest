@@ -1,3 +1,6 @@
+const { default: axios } = require('axios');
+const { error } = require('jquery');
+
 window._ = require('lodash');
 
 try {
@@ -30,3 +33,41 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 //     cluster: process.env.MIX_PUSHER_APP_CLUSTER,
 //     forceTLS: true
 // });
+
+// interceptando requisiçoes
+axios.interceptors.request.use(
+    config => {
+        config.headers.Accept = 'application/json'
+
+        let cookie = document.cookie.split(';')
+                
+        let token = cookie.find(
+                index => index.indexOf('token=') ==! '-1'
+            ).split('=')[1]
+
+
+        config.headers.Authorization = 'Bearer ' + token
+
+        return config
+    },
+
+    error =>{
+        console.log('message de request, error ', error)
+        return Promise.reject(error)
+        // console.log('message de error, error '+ error)
+    }
+)
+
+axios.interceptors.response.use(
+    response =>{
+        console.log('message de response,sucess, ', response)
+        return response
+    },
+
+    error =>{
+        console.log('message de response,error ', response)
+        return Promise.reject(error)
+    }
+
+
+)

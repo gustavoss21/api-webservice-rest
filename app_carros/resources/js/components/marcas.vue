@@ -196,17 +196,6 @@ import Pagination from './pagination.vue'
             }
            
         }},
-        computed:{
-            getToken(){
-                let cookie = document.cookie.split(';')
-                
-                let token = cookie.find(
-                        index => index.indexOf('token=') ==! '-1'
-                    ).split('=')[1]
-
-                return 'Bearer ' + token
-            }
-        },
 
         methods:{
             changeFile($e){
@@ -225,8 +214,7 @@ import Pagination from './pagination.vue'
                 let config = {
                     headers : {
                         'Content-Type' : 'multipart/form-data',
-                        'accept': 'application/json',
-                        'Authorization' : this.getToken
+                        
                     }
                 }
                 console.log(config)
@@ -267,13 +255,6 @@ import Pagination from './pagination.vue'
                 let url = this.urlBasy+'/'+this.$store.state.id
                 let formData = new FormData()
                 formData.append('_method', 'delete')
-
-                let config = {
-                    headers : {
-                        'Accept': 'application/json',
-                        'Authorization' : this.getToken
-                    }
-                }
 
                 axios.post(url,formData,config)
                     .then(response=>{
@@ -342,8 +323,6 @@ import Pagination from './pagination.vue'
                 let config = {
                     headers : {
                         'Content-Type' : 'multipart/form-data',
-                        'accept': 'application/json',
-                        'Authorization' : this.getToken
                     }
                 }
                 console.log(this.marcas.data)
