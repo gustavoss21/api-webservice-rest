@@ -43,29 +43,48 @@ axios.interceptors.request.use(
                 
         let token = cookie.find(
                 index => index.indexOf('token=') ==! '-1'
-            ).split('=')[1]
+            )
+            
+        if(token){
+            token = token.split('=')[1]
 
-
-        config.headers.Authorization = 'Bearer ' + token
-
+            config.headers.Authorization = 'Bearer ' + token
+        }
         return config
     },
 
     error =>{
-        console.log('message de request, error ', error)
         return Promise.reject(error)
-        // console.log('message de error, error '+ error)
     }
 )
 
 axios.interceptors.response.use(
     response =>{
-        console.log('message de response,sucess, ', response)
+        // console.log('message de response,sucess, ', response)
         return response
     },
 
-    error =>{
-        console.log('message de response,error ', response)
+    error => {        
+        if(error.response.data.message === 'Token has expired' && error.response.status == 401){
+            axios.post('http://127.0.0.1:8000/api/refresh')
+                .then(
+                    response => {
+                        document.cookie = 'token=' + response.data + ';SameSite=Lax'
+                        window.location.reload()
+                        console.log(1212121,document.cookie.token)
+                        console.log(1212121,response.data)
+                    }
+                )
+                .catch(
+                    error => {
+                        console.log(error)
+                        return error
+                    }
+                )
+            console.log('if confirmed')
+            
+        }
+    
         return Promise.reject(error)
     }
 

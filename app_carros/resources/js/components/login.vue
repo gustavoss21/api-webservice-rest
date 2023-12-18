@@ -68,8 +68,6 @@
         methods:{
             login(e){
                 let url = 'http://127.0.0.1:8000/api/login';
-                // let data = new URLSearchParams(url)
-                // let data = new URLSearchParams({'email':this.email,'password':this.senha})
                 let settings = {
                     method: "post",
                     body: new URLSearchParams({
@@ -77,10 +75,6 @@
                     'password':this.senha
                 })
                 }
-                console.log({
-                    'email':this.email,
-                    'password':this.senha
-                })
 
                 fetch(url,settings)
                     .then(data => data.json())
@@ -92,9 +86,7 @@
                             
                             e.target.submit()
                         }
-                        )
-
-                console.log('teste')
+                    )
             }
         }
     }

@@ -239,8 +239,10 @@ import Pagination from './pagination.vue'
                         '?'+this.uriPagination + this.uriFilter
 
                 let url = this.urlBasy+uri
+                
                 axios.get(url)
-                    .then(response=>{
+                    .then(
+                        response => {
                         this.marcas = response.data
                     })
                     .catch(error => {console.log(error)})
